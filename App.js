@@ -1,20 +1,33 @@
+import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import UrlInputScreen from './UrlInputScreen';
+import WebViewScreen from './WebViewScreen';
 
 export default function App() {
+  const [currentUrl, setCurrentUrl] = useState('');
+
+  const handleNavigateToWebView = (url) => {
+    setCurrentUrl(url);
+  };
+
+  const handleBackToInput = () => {
+    setCurrentUrl('');
+  };
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+    <SafeAreaProvider>
       <StatusBar style="auto" />
-    </View>
+      {currentUrl ? (
+        <WebViewScreen 
+          url={currentUrl} 
+          onBack={handleBackToInput} 
+        />
+      ) : (
+        <UrlInputScreen 
+          onNavigate={handleNavigateToWebView} 
+        />
+      )}
+    </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
