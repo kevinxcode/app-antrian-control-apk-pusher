@@ -21,7 +21,8 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.kevinalnizar.antriancsapk"
+      "package": "com.kevinalnizar.antriancsapk",
+      "usesCleartextTraffic": true
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -36,6 +37,9 @@
     },
     "updates": {
       "url": "https://u.expo.dev/8d657428-e10a-4303-b1b1-10a33752dff1"
-    }
+    },
+    "plugins": [
+      "expo-build-properties"
+    ]
   }
 }
