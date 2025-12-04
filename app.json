@@ -39,7 +39,14 @@
       "url": "https://u.expo.dev/8d657428-e10a-4303-b1b1-10a33752dff1"
     },
     "plugins": [
-      "expo-build-properties"
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ]
     ]
   }
 }
