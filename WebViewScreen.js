@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, BackHandler } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, TouchableOpacity, Text, StyleSheet, BackHandler, Animated } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -28,6 +28,8 @@ const WebViewScreen = ({ url, onBack }) => {
     true;
   `;
   const webViewRef = useRef(null);
+  const rotateAnim = useRef(new Animated.Value(0)).current;
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
@@ -43,10 +45,24 @@ const WebViewScreen = ({ url, onBack }) => {
   };
 
   const handleRefresh = () => {
-    if (webViewRef.current) {
+    if (webViewRef.current && !isRefreshing) {
+      setIsRefreshing(true);
+      Animated.timing(rotateAnim, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }).start(() => {
+        rotateAnim.setValue(0);
+        setIsRefreshing(false);
+      });
       webViewRef.current.reload();
     }
   };
+
+  const spin = rotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
   
   return (
     <View style={styles.container}>
@@ -60,8 +76,12 @@ const WebViewScreen = ({ url, onBack }) => {
         <TouchableOpacity 
           style={styles.refreshButton} 
           onPress={handleRefresh}
+          disabled={isRefreshing}
         >
-          <Text style={styles.refreshText}>↻ Refresh</Text>
+          <Animated.Text style={[styles.refreshText, { transform: [{ rotate: spin }] }]}>
+            ↻
+          </Animated.Text>
+          <Text style={styles.refreshText}> Refresh</Text>
         </TouchableOpacity>
       </View>
       <WebView 
@@ -112,6 +132,8 @@ const styles = StyleSheet.create({
   },
   refreshButton: {
     padding: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   refreshText: {
     fontSize: 16,
