@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { View, TextInput, TouchableOpacity, Text, FlatList, StyleSheet, Dimensions } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -10,11 +9,24 @@ const UrlInputScreen = ({ onNavigate }) => {
   const [url, setUrl] = useState('');
   const [history, setHistory] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [lastActiveUrl, setLastActiveUrl] = useState('');
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
     loadHistory();
+    checkLastSession();
   }, []);
+
+  const checkLastSession = async () => {
+    try {
+      const lastUrl = await AsyncStorage.getItem('lastActiveUrl');
+      if (lastUrl) {
+        setLastActiveUrl(lastUrl);
+      }
+    } catch (error) {
+      console.log('Error checking session:', error);
+    }
+  };
 
   const loadHistory = async () => {
     try {
@@ -50,17 +62,28 @@ const UrlInputScreen = ({ onNavigate }) => {
     onNavigate(selectedUrl);
   };
 
+  const continueLastSession = () => {
+    onNavigate(lastActiveUrl);
+  };
+
   return (
-    <LinearGradient
-      colors={['#667eea', '#764ba2']}
-      style={[styles.container, { paddingTop: insets.top + 20 }]}
-    >
+    <View style={[styles.container, { paddingTop: insets.top + 20 }]}>
       <View style={styles.header}>
         <Text style={styles.title}>🚀 Control Panel</Text>
         <Text style={styles.subtitle}>Sistem Antrian</Text>
       </View>
       
       <View style={styles.card}>
+        {lastActiveUrl && (
+          <View style={styles.sessionCard}>
+            <Text style={styles.sessionTitle}>🔄 Session Aktif</Text>
+            <Text style={styles.sessionUrl} numberOfLines={1}>{lastActiveUrl}</Text>
+            <TouchableOpacity style={styles.continueButton} onPress={continueLastSession}>
+              <Text style={styles.continueButtonText}>Lanjutkan Session</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+        
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
@@ -108,13 +131,14 @@ const UrlInputScreen = ({ onNavigate }) => {
           />
         </View>
       )}
-    </LinearGradient>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#667eea',
   },
   header: {
     alignItems: 'center',
@@ -219,6 +243,37 @@ const styles = StyleSheet.create({
     color: '#666',
     textAlign: 'center',
     marginBottom: 15,
+  },
+  sessionCard: {
+    backgroundColor: '#e8f5e8',
+    borderRadius: 15,
+    padding: 15,
+    marginBottom: 20,
+    borderLeftWidth: 4,
+    borderLeftColor: '#4CAF50',
+  },
+  sessionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2E7D32',
+    marginBottom: 5,
+  },
+  sessionUrl: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 10,
+  },
+  continueButton: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  continueButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
 

@@ -43,10 +43,12 @@
         "expo-build-properties",
         {
           "android": {
-            "usesCleartextTraffic": true
+            "usesCleartextTraffic": true,
+            "forceDarkModeOff": true
           }
         }
-      ]
+      ],
+      "expo-system-ui"
     ]
   }
 }
