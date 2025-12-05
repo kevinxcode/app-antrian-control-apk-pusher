@@ -41,6 +41,12 @@ const WebViewScreen = ({ url, onBack }) => {
     }
     return false;
   };
+
+  const handleRefresh = () => {
+    if (webViewRef.current) {
+      webViewRef.current.reload();
+    }
+  };
   
   return (
     <View style={styles.container}>
@@ -50,6 +56,12 @@ const WebViewScreen = ({ url, onBack }) => {
           onPress={onBack}
         >
           <Text style={styles.backText}>← Keluar</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.refreshButton} 
+          onPress={handleRefresh}
+        >
+          <Text style={styles.refreshText}>↻ Refresh</Text>
         </TouchableOpacity>
       </View>
       <WebView 
@@ -88,11 +100,20 @@ const styles = StyleSheet.create({
   header: {
     padding: 10,
     backgroundColor: '#f0f0f0',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   backButton: {
     padding: 10,
   },
   backText: {
+    fontSize: 16,
+    color: '#007AFF',
+  },
+  refreshButton: {
+    padding: 10,
+  },
+  refreshText: {
     fontSize: 16,
     color: '#007AFF',
   },
