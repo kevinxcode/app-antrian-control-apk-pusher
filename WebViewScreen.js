@@ -49,7 +49,7 @@ const WebViewScreen = ({ url, onBack }) => {
           style={styles.backButton} 
           onPress={onBack}
         >
-          <Text style={styles.backText}>← Kembali</Text>
+          <Text style={styles.backText}>← Keluar</Text>
         </TouchableOpacity>
       </View>
       <WebView 
